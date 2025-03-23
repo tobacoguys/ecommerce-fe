@@ -34,10 +34,10 @@ const ThemeProvider = ({ children }) => {
     }
 
     const getCountry = async (url) => {
-        const responsive = await axios.get(url).then((res) => {
-          setCountryList(res.data.data)
-        })
-    }
+        await axios.get(url).then((res) => {
+          setCountryList(res.data.data);
+        });
+      };
 
     const handleClose = (event, reason) => {
         if (reason === "clickaway") {
