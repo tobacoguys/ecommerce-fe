@@ -10,6 +10,11 @@ const ThemeProvider = ({ children }) => {
     const [categoryData, setCategoryData] = useState([]);
     const [productData, setProductData] = useState([]);
     const [countryList, setCountryList] = useState([]);
+    const [alertBox, setAlertBox] = useState({
+        msg: "",
+        error: false,
+        open: false,
+    });
 
     const getCartData = () => {
         const user = JSON.parse(localStorage.getItem("user"));
