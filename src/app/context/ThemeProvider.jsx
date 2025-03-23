@@ -15,6 +15,7 @@ const ThemeProvider = ({ children }) => {
         error: false,
         open: false,
     });
+    const [addingInCart, setAddingInCart] = useState(false);
 
     const getCartData = () => {
         const user = JSON.parse(localStorage.getItem("user"));
@@ -36,7 +37,19 @@ const ThemeProvider = ({ children }) => {
         const responsive = await axios.get(url).then((res) => {
           setCountryList(res.data.data)
         })
-      }
+    }
+
+    const handleClose = () => {
+        setAlertBox({ open: false });
+    };
+      
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+      
+    useEffect(() => {
+        const handleResize = () => setWindowWidth(window.innerWidth);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     useEffect(() => {
         getCountry("https://countriesnow.space/api/v0.1/countries/");
@@ -64,6 +77,40 @@ const ThemeProvider = ({ children }) => {
         }
     }, [isLogin]);
 
+    const addToCart = (data) => {
+        if (isLogin) {
+          setAddingInCart(true);
+          postData(`/api/cart/add`, data).then((res) => {
+            if (res.status !== false) {
+              setAlertBox({
+                open: true,
+                error: false,
+                msg: "Item is added in the cart",
+              });
+    
+              setTimeout(() => {
+                setAddingInCart(false);
+              }, 1000);
+    
+              getCartData();
+            } else {
+              setAlertBox({
+                open: true,
+                error: true,
+                msg: res.msg,
+              });
+              setAddingInCart(false);
+            }
+          });
+        } else {
+          setAlertBox({
+            open: true,
+            error: true,
+            msg: "Please login first",
+          });
+        }
+      };
+
     const values = {
         isLogin,
         setIsLogin,
@@ -73,6 +120,13 @@ const ThemeProvider = ({ children }) => {
         setIsOpenProductModal,
         categoryData,
         setCategoryData,
+        productData,
+        setProductData,
+        countryList,
+        setCountryList,
+        addingInCart,
+        setAddingInCart,
+        addToCart,
     }
     return (
         <MyContext.Provider value={ values }>
