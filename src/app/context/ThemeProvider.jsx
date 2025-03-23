@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 const ThemeProvider = ({ children }) => {
     const [isLogin, setIsLogin] = useState(false);
+    const [user, setUser] = useState({ name: "", email: "", userId: "" });
     const [isOpenProductModal, setIsOpenProductModal] = useState(false);
     const [ cartData, setCartData ] = useState([]);
     const [categoryData, setCategoryData] = useState([]);
@@ -25,6 +26,18 @@ const ThemeProvider = ({ children }) => {
             setCategoryData(res.categoryList);
         });
     }, []);
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+            setIsLogin(true);
+            const user = JSON.parse(localStorage.getItem("user"));
+            setUser(user);
+        } else {
+            setIsLogin(false);
+        }
+    }, [isLogin]);
 
     const values = {
         isLogin,
