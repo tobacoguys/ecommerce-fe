@@ -1,10 +1,11 @@
 import { MyContext } from "./ThemeContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const ThemeProvider = ({ children }) => {
     const [isLogin, setIsLogin] = useState(false);
     const [isOpenProductModal, setIsOpenProductModal] = useState(false);
     const [ cartData, setCartData ] = useState([]);
+    const [categoryData, setCategoryData] = useState([]);
 
     const getCartData = () => {
         const user = JSON.parse(localStorage.getItem("user"));
@@ -19,6 +20,12 @@ const ThemeProvider = ({ children }) => {
         getCartData();
     }, []);
 
+    useEffect(() => {
+        fetchDataFromApi("/api/category").then((res) => {
+            setCategoryData(res.categoryList);
+        });
+    }, []);
+
     const values = {
         isLogin,
         setIsLogin,
@@ -26,6 +33,8 @@ const ThemeProvider = ({ children }) => {
         setCartData,
         isOpenProductModal,
         setIsOpenProductModal,
+        categoryData,
+        setCategoryData,
     }
     return (
         <MyContext.Provider value={ values }>
