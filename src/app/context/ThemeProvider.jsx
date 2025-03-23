@@ -39,7 +39,10 @@ const ThemeProvider = ({ children }) => {
         })
     }
 
-    const handleClose = () => {
+    const handleClose = (event, reason) => {
+        if (reason === "clickaway") {
+          return;
+        }
         setAlertBox({ open: false });
     };
       
@@ -127,6 +130,10 @@ const ThemeProvider = ({ children }) => {
         addingInCart,
         setAddingInCart,
         addToCart,
+        openProductDetailsModal,
+        handleClose,
+        alertBox,
+        setAlertBox,
     }
     return (
         <MyContext.Provider value={ values }>
