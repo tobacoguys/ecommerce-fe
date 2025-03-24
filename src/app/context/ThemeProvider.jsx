@@ -1,39 +1,72 @@
+"use client"
+
 import { MyContext } from "./ThemeContext";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
 const ThemeProvider = ({ children }) => {
-    const [isLogin, setIsLogin] = useState(false);
-    const [user, setUser] = useState({ name: "", email: "", userId: "" });
-    const [isOpenProductModal, setIsOpenProductModal] = useState(false);
-    const [ cartData, setCartData ] = useState([]);
-    const [categoryData, setCategoryData] = useState([]);
-    const [productData, setProductData] = useState([]);
-    const [countryList, setCountryList] = useState([]);
-    const [alertBox, setAlertBox] = useState({
-        msg: "",
-        error: false,
-        open: false,
-    });
-    const [addingInCart, setAddingInCart] = useState(false);
 
-    useEffect(() => {
-        getCountry("https://countriesnow.space/api/v0.1/countries/");
-    
-        fetchDataFromApi("/api/category").then((res) => {
-          setCategoryData(res.categoryList);
-        });
-    
-        const storedUser = JSON.parse(localStorage.getItem("user"));
-        fetchDataFromApi(`/api/cart?userId=${storedUser?.userId}`).then((res) => {
-          setCartData(res);
-        });
-    
-        const location = localStorage.getItem("location");
-        if (location) {
-          setSelectedCountry(location);
-        }
-      }, []);
+const [countryList, setCountryList] = useState([]);
+  const [selectedCountry, setselectedCountry] = useState('');
+  const [isOpenProductModal, setisOpenProductModal] = useState(false);
+  const [isHeaderFooterShow, setisHeaderFooterShow] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
+  const [productData, setProductData] = useState([]);
+
+  const [categoryData, setCategoryData] = useState([]);
+  const [subCategoryData, setsubCategoryData] = useState([]);
+  const [addingInCart, setAddingInCart] = useState(false);
+
+  const [cartData, setCartData] = useState();
+  const [searchData, setSearchData] = useState([]);
+  const [isOpenNav, setIsOpenNav] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  const [alertBox, setAlertBox] = useState({
+    msg: '',
+    error: false,
+    open: false
+  })
+
+  const [user, setUser] = useState({
+    name: "",
+    email: "",
+    userId: ""
+  })
+
+  useEffect(() => {
+    getCountry("https://countriesnow.space/api/v0.1/countries/");
+
+
+    fetchDataFromApi("/api/category").then((res) => {
+      setCategoryData(res.categoryList);
+    })
+
+
+
+    const user = JSON.parse(localStorage.getItem("user"));
+    fetchDataFromApi(`/api/cart?userId=${user?.userId}`).then((res) => {
+      setCartData(res)
+    });
+
+
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+     const location = localStorage.getItem("location");
+    if (location !== null && location !== "" && location !== undefined) {
+      setselectedCountry(location)
+    }
+
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+
+  }, []);
 
     const getCartData = () => {
         const user = JSON.parse(localStorage.getItem("user"));
@@ -75,18 +108,6 @@ const ThemeProvider = ({ children }) => {
         }
         setAlertBox({ open: false });
     };
-      
-    useEffect(() => {
-        const handleResize = () => {
-          setWindowWidth(window.innerWidth);
-        };
-    
-        window.addEventListener("resize", handleResize);
-    
-        return () => {
-          window.removeEventListener("resize", handleResize);
-        };
-      }, []);
 
     const addToCart = (data) => {
         if (isLogin) {
@@ -123,25 +144,34 @@ const ThemeProvider = ({ children }) => {
       };
 
     const values = {
+        countryList,
+        setselectedCountry,
+        selectedCountry,
+        isOpenProductModal,
+        setisOpenProductModal,
+        isHeaderFooterShow,
+        setisHeaderFooterShow,
         isLogin,
         setIsLogin,
-        cartData,
-        setCartData,
-        isOpenProductModal,
-        setIsOpenProductModal,
         categoryData,
         setCategoryData,
-        productData,
-        setProductData,
-        countryList,
-        setCountryList,
-        addingInCart,
-        setAddingInCart,
-        addToCart,
+        subCategoryData,
+        setsubCategoryData,
         openProductDetailsModal,
-        handleClose,
         alertBox,
         setAlertBox,
+        addToCart,
+        addingInCart,
+        setAddingInCart,
+        cartData,
+        setCartData,
+        getCartData,
+        searchData,
+        setSearchData,
+        windowWidth,
+        isOpenNav,
+        setIsOpenNav,
+        productData
     }
     return (
         <MyContext.Provider value={ values }>
