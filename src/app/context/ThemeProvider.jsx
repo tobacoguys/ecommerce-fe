@@ -17,6 +17,24 @@ const ThemeProvider = ({ children }) => {
     });
     const [addingInCart, setAddingInCart] = useState(false);
 
+    useEffect(() => {
+        getCountry("https://countriesnow.space/api/v0.1/countries/");
+    
+        fetchDataFromApi("/api/category").then((res) => {
+          setCategoryData(res.categoryList);
+        });
+    
+        const storedUser = JSON.parse(localStorage.getItem("user"));
+        fetchDataFromApi(`/api/cart?userId=${storedUser?.userId}`).then((res) => {
+          setCartData(res);
+        });
+    
+        const location = localStorage.getItem("location");
+        if (location) {
+          setSelectedCountry(location);
+        }
+      }, []);
+
     const getCartData = () => {
         const user = JSON.parse(localStorage.getItem("user"));
         if (user?.userId) {
@@ -65,28 +83,6 @@ const ThemeProvider = ({ children }) => {
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     }, []);
-
-    useEffect(() => {
-        getCountry("https://countriesnow.space/api/v0.1/countries/");
-    }, []);
-
-    useEffect(() => {
-        fetchDataFromApi("/api/category").then((res) => {
-            setCategoryData(res.categoryList);
-        });
-    }, []);
-
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-
-        if (token) {
-            setIsLogin(true);
-            const user = JSON.parse(localStorage.getItem("user"));
-            setUser(user);
-        } else {
-            setIsLogin(false);
-        }
-    }, [isLogin]);
 
     const addToCart = (data) => {
         if (isLogin) {
