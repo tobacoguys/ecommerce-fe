@@ -26,6 +26,18 @@ const ThemeProvider = ({ children }) => {
         }
     };
 
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+    
+        if (token) {
+          setIsLogin(true);
+          const userData = JSON.parse(localStorage.getItem("user"));
+          setUser(userData);
+        } else {
+          setIsLogin(false);
+        }
+      }, [isLogin]);
+
     const openProductDetailsModal = (id, status) => {
         fetchDataFromApi(`/api/product/${id}`).then((res) => {
             setProductData(res);
@@ -56,10 +68,6 @@ const ThemeProvider = ({ children }) => {
 
     useEffect(() => {
         getCountry("https://countriesnow.space/api/v0.1/countries/");
-    }, []);
-
-    useEffect(() => {
-        getCartData();
     }, []);
 
     useEffect(() => {
